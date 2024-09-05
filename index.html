@@ -78,6 +78,12 @@
                 height: auto;
             }
         }
+        #accessibility-controls {
+            margin-top: 1rem;
+        }
+        .high-contrast {
+            filter: invert(1) hue-rotate(180deg);
+        }
     </style>
 </head>
 <body>
@@ -92,9 +98,10 @@
                 <li>Use the zoom buttons for finer control</li>
                 <li>Change color schemes using the dropdown</li>
                 <li>Save or share your current view</li>
+                <li>Use the auto zoom feature for continuous exploration</li>
             </ol>
         </div>
-        <canvas id="mandelbrot-canvas" width="800" height="600"></canvas>
+        <canvas id="mandelbrot-canvas" width="800" height="600" tabindex="0" aria-label="Mandelbrot set visualization"></canvas>
         <div id="controls">
             <button id="zoom-in">Zoom In</button>
             <button id="zoom-out">Zoom Out</button>
@@ -108,6 +115,9 @@
             <button id="save">Save View</button>
             <button id="share">Share</button>
             <button id="auto-zoom">Auto Zoom</button>
+        </div>
+        <div id="accessibility-controls">
+            <button id="high-contrast">Toggle High Contrast</button>
         </div>
         <div id="history">
             <h3>Exploration History:</h3>
@@ -306,6 +316,39 @@
             zoom *= 2;
             drawMandelbrot();
             addToHistory();
+        });
+
+        canvas.addEventListener("keydown", (e) => {
+            const step = 0.1 / zoom;
+            switch (e.key) {
+                case "ArrowUp":
+                    centerY -= step;
+                    break;
+                case "ArrowDown":
+                    centerY += step;
+                    break;
+                case "ArrowLeft":
+                    centerX -= step;
+                    break;
+                case "ArrowRight":
+                    centerX += step;
+                    break;
+                case "+":
+                    zoom *= 1.5;
+                    break;
+                case "-":
+                    zoom /= 1.5;
+                    break;
+                default:
+                    return;
+            }
+            e.preventDefault();
+            drawMandelbrot();
+            addToHistory();
+        });
+
+        document.getElementById("high-contrast").addEventListener("click", () => {
+            document.body.classList.toggle("high-contrast");
         });
 
         window.addEventListener("load", () => {
